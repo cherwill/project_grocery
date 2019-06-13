@@ -13,7 +13,7 @@ inputdata = spark.read.csv("abfss://input@tescohackathon.dfs.core.windows.net/te
 # COMMAND ----------
 
 # Convert to delta lake parquet format for efficient SQL table storage
-inputdata.write.format("delta").save("/delta/inputdata")
+inputdata.write.format("delta").mode("overwrite").save("/delta/inputdata")
 
 # COMMAND ----------
 
@@ -107,4 +107,21 @@ pandasinputdata
 
 # COMMAND ----------
 
+# Coalesce partitioned output fragments into single file and save
+df.coalesce(1) \
+    .write.format("com.databricks.spark.csv") \
+    .option("header", "true") \
+    .mode("overwrite") \
+    .save("abfss://output@tescohackathon.dfs.core.windows.net/tempdata")
 
+# COMMAND ----------
+
+# MAGIC %scala
+# MAGIC // Find the name of the coalesced file
+# MAGIC val mergedfile = dbutils.fs.ls("abfss://output@tescohackathon.dfs.core.windows.net/tempdata").map(_.name).filter(file=>file.endsWith(".csv"))(0)
+
+# COMMAND ----------
+
+# MAGIC %scala
+# MAGIC // Move the file to the route output path and rename
+# MAGIC dbutils.fs.mv("abfss://output@tescohackathon.dfs.core.windows.net/tempdata/" + mergedfile, "abfss://output@tescohackathon.dfs.core.windows.net/data.csv")
