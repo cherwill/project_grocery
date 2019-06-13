@@ -21,7 +21,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class APICall {
-    private String url;
+    private String url, location, facility;
     private Context context;
     private TextView textView;
     private TestModel tmodel;
@@ -29,8 +29,11 @@ public class APICall {
     Request request;
     private TextToSpeech tts;
 
-    public APICall(String url, Context context) {
+
+    public APICall(String url, String location, String facility, Context context) {
         this.context = context;
+        this.location = location;
+        this.facility = facility;
         textView = ((Activity)context).findViewById(R.id.textView);
 
         textView.setText("Changed!");
@@ -38,11 +41,16 @@ public class APICall {
         client = new OkHttpClient();
         this.url = url;
 
+
         HttpUrl.Builder urlBuilder = HttpUrl.parse(this.url).newBuilder();
         urlBuilder.addQueryParameter("offset", "0");
         urlBuilder.addQueryParameter("limit", "10");
-        urlBuilder.addQueryParameter("sort", "near:chingford"); //location buzzword
-        urlBuilder.addQueryParameter("facilities", "WHEELCHAIR_ACCESS"); //access buzzword
+        if (location != null && location.length() > 0) {
+            urlBuilder.addQueryParameter("sort", "near:" + location); //location buzzword
+        }
+        if (facility != null && facility.length() > 0) {
+            urlBuilder.addQueryParameter("facilities", facility); //access buzzword
+        }
         String uri = urlBuilder.build().toString();
 
         request = new Request.Builder()
