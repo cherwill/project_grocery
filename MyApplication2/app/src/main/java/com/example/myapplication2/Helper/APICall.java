@@ -13,6 +13,7 @@ import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -34,8 +35,15 @@ public class APICall {
         client = new OkHttpClient();
         this.url = url;
 
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(this.url).newBuilder();
+        urlBuilder.addQueryParameter("offset", "0");
+        urlBuilder.addQueryParameter("limit", "10");
+        urlBuilder.addQueryParameter("sort", "near:chingford");
+        String uri = urlBuilder.build().toString();
+
         request = new Request.Builder()
-                .url(url)
+                .url(uri)
+                .addHeader("Ocp-Apim-Subscription-Key","47db0bfc5032433cbf31ab78415fe4b1")
                 .build();
 
 
@@ -65,7 +73,7 @@ public class APICall {
 
                                 TestModel tmodel = (TestModel) GsonHelper.deserialize(json.toString(), TestModel.class);
 
-                                textView.setText(tmodel.getId().toString());
+                                textView.setText(tmodel.results[0].location.name);
                             }
                         });
                     } catch (Exception e){

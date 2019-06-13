@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        APICall apiCall = new APICall("https://jsonplaceholder.typicode.com/todos/1", this);
+        APICall apiCall = new APICall("https://dev.tescolabs.com/locations/search", this);
 
         apiCall.execute();
 
