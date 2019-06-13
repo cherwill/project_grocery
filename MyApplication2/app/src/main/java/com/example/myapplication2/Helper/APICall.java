@@ -39,6 +39,7 @@ public class APICall {
         urlBuilder.addQueryParameter("offset", "0");
         urlBuilder.addQueryParameter("limit", "10");
         urlBuilder.addQueryParameter("sort", "near:chingford");
+        urlBuilder.addQueryParameter("facilities", "WHEELCHAIR_ACCESS");
         String uri = urlBuilder.build().toString();
 
         request = new Request.Builder()
