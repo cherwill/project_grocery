@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import android.widget.Toast
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.speech.tts.TextToSpeech
 import android.widget.TextView
 import kotlinx.android.synthetic.main.content_main.*
 
@@ -62,7 +63,10 @@ class MainActivity : AppCompatActivity() {
 
                     val result = data
                         .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-                    mainTextView.setText(result[0])
+                    var inputString = result[0];
+                    var location = inputString.split(" in ")[1].split("with")[0];
+                    var facility = inputString.split("with")[1];
+                    mainTextView.setText(location + facility)
                 }
             }
         }
