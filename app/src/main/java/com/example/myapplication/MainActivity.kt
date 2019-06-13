@@ -64,9 +64,14 @@ class MainActivity : AppCompatActivity() {
                     val result = data
                         .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
                     var inputString = result[0];
-                    var location = inputString.split(" in ")[1].split("with")[0];
-                    var facility = inputString.split("with")[1];
-                    mainTextView.setText(location + facility)
+                    if (inputString.contains(" in ") and inputString.contains(" with ")) {
+                        var location = inputString.split(" in ")[1].split("with")[0];
+                        var facility = inputString.split("with")[1];
+                        mainTextView.setText(location + facility);
+                    } else {
+                        mainTextView.setText("Couldn't find location or facillity");
+                    }
+//                    mainTextView.setText(location + facility)
                 }
             }
         }
