@@ -2,6 +2,7 @@ package com.example.myapplication2.Helper;
 
 import android.app.Activity;
 import android.content.Context;
+import android.speech.tts.TextToSpeech;
 import android.widget.TextView;
 
 import com.example.myapplication2.DataModel.TestModel;
@@ -10,6 +11,7 @@ import com.example.myapplication2.R;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -25,6 +27,7 @@ public class APICall {
     private TestModel tmodel;
     OkHttpClient client;
     Request request;
+    private TextToSpeech tts;
 
     public APICall(String url, Context context) {
         this.context = context;
@@ -38,8 +41,8 @@ public class APICall {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(this.url).newBuilder();
         urlBuilder.addQueryParameter("offset", "0");
         urlBuilder.addQueryParameter("limit", "10");
-        urlBuilder.addQueryParameter("sort", "near:chingford");
-        urlBuilder.addQueryParameter("facilities", "WHEELCHAIR_ACCESS");
+        urlBuilder.addQueryParameter("sort", "near:chingford"); //location buzzword
+        urlBuilder.addQueryParameter("facilities", "WHEELCHAIR_ACCESS"); //access buzzword
         String uri = urlBuilder.build().toString();
 
         request = new Request.Builder()
@@ -72,9 +75,17 @@ public class APICall {
                             public void run() {
 
 
-                                TestModel tmodel = (TestModel) GsonHelper.deserialize(json.toString(), TestModel.class);
+                                final TestModel tmodel = (TestModel) GsonHelper.deserialize(json.toString(), TestModel.class);
 
                                 textView.setText(tmodel.results[0].location.name);
+
+                                tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
+                                    @Override
+                                    public void onInit(int i) {
+                                        tts.setLanguage(Locale.US);
+                                        tts.speak(tmodel.results[0].location.name, TextToSpeech.QUEUE_ADD, null);
+                                    }
+                                });
                             }
                         });
                     } catch (Exception e){
